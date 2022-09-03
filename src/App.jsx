@@ -24,15 +24,16 @@ export const App = () => {
   const [images, setImages] = useState([]);
   const [total, setTotal] = useState(0);
 
+  // ===== not sure if this is ok ...
   useEffect(() => {
     setLoading(true);
     getImages(page, search)
       .then(({ hits }) => {
-        setImages(images.concat(hits));
+        setImages(prevImages => prevImages.concat(hits));
         setLoading(false);
       })
       .catch(setLoading(false));
-  }, [page, search, images]);
+  }, [page, search]);
 
   //here not sure about query ..??
   const submitHandler = ({ query }, { setSubmitting }) => {
@@ -59,7 +60,7 @@ export const App = () => {
   };
 
   const onLoadMoreHandler = () => {
-    setPage(prevState => prevState + 1, setLoading(true));
+    setPage(prevPage => prevPage + 1, setLoading(true));
   };
 
   return (
