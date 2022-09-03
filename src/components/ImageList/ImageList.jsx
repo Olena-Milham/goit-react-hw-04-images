@@ -1,4 +1,4 @@
-import { Component } from 'react';
+// import { Component } from 'react';
 import { ImageItem } from './ImageItem/ImageItem';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
@@ -16,18 +16,28 @@ const PhotoList = styled.ul`
   margin-right: auto;
 `;
 
-export class ImageList extends Component {
-  render() {
-    // console.log(this.props.data);
-    return (
-      <PhotoList>
-        {this.props.data.map(item => (
-          <ImageItem data={item} key={item.webformatURL} />
-        ))}
-      </PhotoList>
-    );
-  }
+export default function ImageList({ data }) {
+  return (
+    <PhotoList>
+      {data.map(item => (
+        <ImageItem data={item} key={item.webformatURL} />
+      ))}
+    </PhotoList>
+  );
 }
+
+// export class ImageList extends Component {
+//   render() {
+//     // console.log(this.props.data);
+//     return (
+//       <PhotoList>
+//         {this.props.data.map(item => (
+//           <ImageItem data={item} key={item.webformatURL} />
+//         ))}
+//       </PhotoList>
+//     );
+//   }
+// }
 
 ImageList.propTypes = {
   data: PropTypes.arrayOf(

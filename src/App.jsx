@@ -1,6 +1,6 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import { SearchForm } from 'components/SearchForm/SearchForm';
-import { ImageList } from 'components/ImageList/ImageList';
+import ImageList from 'components/ImageList/ImageList';
 import { PrimaryButton } from 'components/ui/buttons/PrimaryButton';
 import { getImages } from 'api/getImages';
 import { ToastContainer, toast } from 'react-toastify';
@@ -17,77 +17,146 @@ const AppContainer = styled.div`
   padding-bottom: 24px;
 `;
 
-export class App extends Component {
-  state = {
-    page: 1,
-    search: '',
-    loading: false,
-    images: [],
-    total: 0,
-  };
+export const App = () => {
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [images, setImages] = useState([]);
+  const [total, setTotal] = useState(0);
 
-  componentDidUpdate(_, prevState) {
-    if (prevState.page !== this.state.page) {
-      this.setState({ loading: true });
+  useEffect(() => {
+    setLoading(true);
+    getImages(page, search)
+      .then(({ hits }) => {
+        setImages(images.concat(hits));
+        setLoading(false);
+      })
+      .catch(setLoading(false));
+  }, [page, search, images]);
 
-      getImages(this.state.page, this.state.search)
-        .then(({ hits }) => {
-          this.setState(prevState => ({
-            images: prevState.images.concat(hits),
-            loading: false,
-          }));
-        })
-        .catch(this.setState({ loading: false }));
-    }
-  }
-
-  submitHandler = ({ search }, { setSubmitting }) => {
-    if (this.state.search === search) {
+  //here not sure about query ..??
+  const submitHandler = ({ query }, { setSubmitting }) => {
+    if (search === query) {
       toast.warning('Please enter a new query');
       return;
     }
-    this.setState({ page: 1, search, loading: true });
+    setPage(1);
+    setSearch(search);
+    setLoading(true);
+
     getImages(1, search)
       .then(({ total, hits }) => {
         toast.success(`We found ${total} images`);
-        this.setState({ images: hits, total, loading: false });
+        setImages(hits);
+        setTotal(total);
+        setLoading(false);
         setSubmitting(false);
       })
       .catch(() => {
-        this.setState({ loading: false });
+        setLoading(false);
         setSubmitting(false);
       });
   };
-  onLoadMoreHandler = () => {
-    this.setState(prevState => ({
-      page: prevState.page + 1,
-      loading: true,
-    }));
+
+  const onLoadMoreHandler = () => {
+    setPage(prevState => prevState + 1, setLoading(true));
   };
 
-  render() {
-    const { images, total, loading, page } = this.state;
-    // console.log(loading);
-    return (
-      <>
-        <AppContainer>
-          <Header>
-            <Container>
-              <SearchForm onSubmit={this.submitHandler} />
-            </Container>
-          </Header>
+  return (
+    <>
+      <AppContainer>
+        <Header>
+          <Container>
+            <SearchForm onSubmit={submitHandler} />
+          </Container>
+        </Header>
 
-          {page === 1 && loading && <Loader />}
-          {images.length > 0 && <ImageList data={this.state.images} />}
-          {images.length !== 0 && images.length < total && (
-            <PrimaryButton onClick={this.onLoadMoreHandler} disabled={loading}>
-              {loading && page > 1 ? <Loader size="small" /> : 'Load more'}
-            </PrimaryButton>
-          )}
+        {page === 1 && loading && <Loader />}
+        {images.length > 0 && <ImageList data={images} />}
+        {images.length !== 0 && images.length < total && (
+          <PrimaryButton onClick={onLoadMoreHandler} disabled={loading}>
+            {loading && page > 1 ? <Loader size="small" /> : 'Load more'}
+          </PrimaryButton>
+        )}
 
-          <ToastContainer autoClose={3000} />
-        </AppContainer>
-      </>
-    );
-  }
-}
+        <ToastContainer autoClose={3000} />
+      </AppContainer>
+    </>
+  );
+};
+
+// ============== How it was ======================
+// export class App extends Component {
+//   state = {
+//     page: 1,
+//     search: '',
+//     loading: false,
+//     images: [],
+//     total: 0,
+//   };
+
+//   componentDidUpdate(_, prevState) {
+//     if (prevState.page !== this.state.page) {
+//       this.setState({ loading: true });
+
+//       getImages(this.state.page, this.state.search)
+//         .then(({ hits }) => {
+//           this.setState(prevState => ({
+//             images: prevState.images.concat(hits),
+//             loading: false,
+//           }));
+//         })
+//         .catch(this.setState({ loading: false }));
+//     }
+//   }
+
+//   submitHandler = ({ search }, { setSubmitting }) => {
+//     if (this.state.search === search) {
+//       toast.warning('Please enter a new query');
+//       return;
+//     }
+//     this.setState({ page: 1, search, loading: true });
+//     getImages(1, search)
+//       .then(({ total, hits }) => {
+//         toast.success(`We found ${total} images`);
+//         this.setState({ images: hits, total, loading: false });
+//         setSubmitting(false);
+//       })
+//       .catch(() => {
+//         this.setState({ loading: false });
+//         setSubmitting(false);
+//       });
+//   };
+//   onLoadMoreHandler = () => {
+//     this.setState(prevState => ({
+//       page: prevState.page + 1,
+//       loading: true,
+//     }));
+//   };
+
+//   render() {
+//     const { images, total, loading, page } = this.state;
+//     // console.log(loading);
+//     return (
+//       <>
+//         <AppContainer>
+//           <Header>
+//             <Container>
+//               <SearchForm onSubmit={this.submitHandler} />
+//             </Container>
+//           </Header>
+
+//           {page === 1 && loading && <Loader />}
+//           {images.length > 0 && <ImageList data={this.state.images} />}
+//           {images.length !== 0 && images.length < total && (
+//             <PrimaryButton onClick={this.onLoadMoreHandler} disabled={loading}>
+//               {loading && page > 1 ? <Loader size="small" /> : 'Load more'}
+//             </PrimaryButton>
+//           )}
+
+//           <ToastContainer autoClose={3000} />
+//         </AppContainer>
+//       </>
+//     );
+//   }
+// }
