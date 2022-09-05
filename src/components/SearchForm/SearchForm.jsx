@@ -1,5 +1,4 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-// import { Component } from 'react';
 import { GoSearch } from 'react-icons/go';
 import styled from 'styled-components';
 import * as yup from 'yup';
@@ -51,66 +50,33 @@ const InputWrapper = styled.div`
   background-color: #fff;
 `;
 
-export const SearchForm = ({ onSubmit }, { isSubmitting }) => {
+export const SearchForm = ({ onSubmit }) => {
   return (
     <Formik
       initialValues={{ query: '' }}
       validationSchema={mySchema}
       onSubmit={onSubmit}
     >
-      return (
-      <StyledForm>
-        <InputWrapper>
-          <SearchButton type="submit" disabled={isSubmitting}>
-            <GoSearch />
-          </SearchButton>
-          <Input
-            name="query"
-            type="text"
-            autoComplete="off"
-            autoFocus
-            placeholder="Search images and photos"
-          />
-        </InputWrapper>
-        <ErrorMessage name="query" />
-      </StyledForm>
-      );
+      {({ isSubmitting }) => (
+        <StyledForm>
+          <InputWrapper>
+            <SearchButton type="submit" disabled={isSubmitting}>
+              <GoSearch />
+            </SearchButton>
+            <Input
+              name="query"
+              type="text"
+              autoComplete="off"
+              autoFocus
+              placeholder="Search images and photos"
+            />
+          </InputWrapper>
+          <ErrorMessage name="query" />
+        </StyledForm>
+      )}
     </Formik>
   );
 };
-
-// =========== The way it was =================
-// export class SearchForm extends Component {
-//   render() {
-//     return (
-//       <Formik
-//         initialValues={{ search: '' }}
-//         validationSchema={mySchema}
-//         onSubmit={this.props.onSubmit}
-//       >
-//         {props => {
-//           return (
-//             <StyledForm>
-//               <InputWrapper>
-//                 <SearchButton type="submit" disabled={props.isSubmitting}>
-//                   <GoSearch />
-//                 </SearchButton>
-//                 <Input
-//                   name="search"
-//                   type="text"
-//                   autoComplete="off"
-//                   autoFocus
-//                   placeholder="Search images and photos"
-//                 />
-//               </InputWrapper>
-//               <ErrorMessage name="search" />
-//             </StyledForm>
-//           );
-//         }}
-//       </Formik>
-//     );
-//   }
-// }
 
 SearchForm.propTypes = {
   name: PropTypes.string,
