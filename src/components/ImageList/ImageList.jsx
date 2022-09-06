@@ -16,28 +16,16 @@ const PhotoList = styled.ul`
   margin-right: auto;
 `;
 
-export default function ImageList({ data }) {
+export const ImageList = ({ data }) => {
+  console.log(data);
   return (
     <PhotoList>
       {data.map(item => (
-        <ImageItem data={item} key={item.webformatURL} />
+        <ImageItem data={item} key={item.id} />
       ))}
     </PhotoList>
   );
-}
-
-// export class ImageList extends Component {
-//   render() {
-//     // console.log(this.props.data);
-//     return (
-//       <PhotoList>
-//         {this.props.data.map(item => (
-//           <ImageItem data={item} key={item.webformatURL} />
-//         ))}
-//       </PhotoList>
-//     );
-//   }
-// }
+};
 
 ImageList.propTypes = {
   data: PropTypes.arrayOf(

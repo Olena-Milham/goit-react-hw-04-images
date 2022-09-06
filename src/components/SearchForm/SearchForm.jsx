@@ -5,7 +5,7 @@ import * as yup from 'yup';
 import PropTypes from 'prop-types';
 
 const mySchema = yup.object().shape({
-  query: yup.string().required('This field is required'),
+  search: yup.string().required('This field is required'),
 });
 
 const StyledForm = styled(Form)`
@@ -53,7 +53,7 @@ const InputWrapper = styled.div`
 export const SearchForm = ({ onSubmit }) => {
   return (
     <Formik
-      initialValues={{ query: '' }}
+      initialValues={{ search: '' }}
       validationSchema={mySchema}
       onSubmit={onSubmit}
     >
@@ -64,14 +64,14 @@ export const SearchForm = ({ onSubmit }) => {
               <GoSearch />
             </SearchButton>
             <Input
-              name="query"
+              name="search"
               type="text"
               autoComplete="off"
               autoFocus
               placeholder="Search images and photos"
             />
           </InputWrapper>
-          <ErrorMessage name="query" />
+          <ErrorMessage name="search" />
         </StyledForm>
       )}
     </Formik>
