@@ -17,7 +17,6 @@ const PhotoList = styled.ul`
 `;
 
 export const ImageList = ({ data }) => {
-  console.log(data);
   return (
     <PhotoList>
       {data.map(item => (

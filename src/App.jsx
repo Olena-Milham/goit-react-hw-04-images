@@ -25,42 +25,33 @@ export const App = () => {
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    if (prevPage => prevPage === page) {
-      setLoading(true);
-
-      getImages(page, search)
-        .then(({ hits }) => {
-          setImages(prevImages => prevImages.concat(hits));
-          setLoading(false);
-        })
-        .catch(setLoading(false));
-    }
+    if (search === '') return;
+    setLoading(true);
+    getImages(page, search)
+      .then(({ total, hits }) => {
+        if (page === 1) {
+          toast.success(`We found ${total} images`);
+        }
+        setImages(prevImages => [...prevImages, ...hits]);
+        setTotal(total);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, [page, search]);
 
   const submitHandler = ({ search }, { setSubmitting }) => {
-    if (search) {
+    if (!search) {
       toast.warning('Please enter a new query');
       return;
     }
     setPage(1);
     setSearch(search);
-    setLoading(true);
-    getImages(1, search)
-      .then(({ total, hits }) => {
-        toast.success(`We found ${total} images`);
-        setImages(hits);
-        setTotal(total);
-        setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
-        setSubmitting(false);
-      });
+    setImages([]);
+    setSubmitting(false);
   };
 
   const onLoadMoreHandler = () => {
-    // setPage(prevPage => prevPage + 1, setLoading(true));
-    setPage(prevPage => prevPage + 1);
+    setPage(page => page + 1);
     setLoading(true);
   };
 
@@ -75,9 +66,9 @@ export const App = () => {
 
         {page === 1 && loading && <Loader />}
         {images.length > 0 && <ImageList data={images} />}
-        {images.length !== 0 && images.length < total && (
+        {images.length !== 0 && page <= total && (
           <PrimaryButton onClick={onLoadMoreHandler} disabled={loading}>
-            {loading && page > 1 ? <Loader size="small" /> : 'Load more'}
+            {loading ? <Loader size="small" color="#ffff" /> : 'Load more'}
           </PrimaryButton>
         )}
 
